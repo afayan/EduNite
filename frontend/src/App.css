@@ -4,6 +4,11 @@
   gap: 10px;
 }
 
+.loginmessage{
+  padding: 10px;
+  border-radius: 7px;
+}
+
 #success{
   background-color: lightgreen;
 }

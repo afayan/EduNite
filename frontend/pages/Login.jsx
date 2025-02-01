@@ -65,8 +65,8 @@ function Login() {
       <input type="password" ref={passwordref} placeholder="password" />
       <input type="password" ref={repeatpasswordref} placeholder="repeat password" />
       <button onClick={handleSignup}>Sign Up</button>
-      <p id="error">{error}</p>
-      <p id="success">{success}</p>
+      {error && <p className="loginmessage" id="error">{error}</p>}
+      {success && <p className="loginmessage" id="success">{success}</p>}
     </div>
   );
 }
