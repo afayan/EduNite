@@ -33,26 +33,47 @@ app.post('/api/signup', (req, res)=>{
     
     db.query('insert into users(email, username, password) values (? , ? , ?);', [email, username, password], (err, result)=>{
         if (err) {
-            console.log(err);
-            
             if (err.code == 'ER_DUP_ENTRY') {
-                return res.json({status: false, message : 'Email already in use', error: err}) 
+                return res.json({status: false, message : 'Email already in use'}) 
             }
             else if (err.code == 'ER_DATA_TOO_LONG') {
-                return res.json({status: false, message : 'Data too long', error: err})             
+                return res.json({status: false, message : 'Data too long'})
             }
 
             else if (err.code = 'ER_BAD_NULL_ERROR'){
                 return res.json({status : false, message : 'Required  field is missing'})
             }
 
-            return res.json({status: false, message : 'An error ocurred', error: err})
+            console.log(err);
+            
+            return res.json({status: false, message : 'An error ocurred'})
         }
 
 
         return res.json({status: true, message: 'Sign Up complete!'})
     })
 
+})
+
+app.post('/api/login', (req, res)=>{
+    
+    const {email, password} = req.body
+
+
+    db.query('select * from users where email = ? and password = ?;',[email, password],(err, result) =>{
+        if (err) {
+            res.json({status : false, message : 'An error occurred'})
+        }
+
+        else if (result.length === 0) {
+            res.json({status : false, message : 'Invalid credentials'})
+        }
+
+        else{
+            res.json({status : true, message : 'Login successful'})
+        }
+    } )
+    
 })
 
 app.listen(port, (req, res)=>{
