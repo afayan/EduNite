@@ -49,10 +49,10 @@
   height: 90vh;
 }
 
-.loginform{
+.loginformlarge{
   background-color: pink;
   flex: 1;
-  padding: 20px;
+  padding: 50px;
 }
 
 @media screen and (max-width : 800px) {

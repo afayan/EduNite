@@ -24,7 +24,7 @@ function Login() {
     let repeat_password = repeatpasswordref.current.value;
 
     if (!password || !username || !email || !repeat_password) {
-      setError("Please fill all data");
+      setError("Please fill all fields");
       return;
     }
 
@@ -154,7 +154,7 @@ function Login() {
     <img src="/pink.jpg" alt="" className="hideonmobile"/>
     
 
-    <div className="loginform">
+    <div className="loginformlarge">
 
       <div className="select">
         <button onClick={openlogin}>Login</button>
