@@ -81,4 +81,8 @@ button{
   .hideonmobile{
     display: none;
   }
+
+  .select{
+    width: 100%;
+  }
 }
