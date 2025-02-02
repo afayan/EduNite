@@ -17,3 +17,46 @@
   background-color: red;
   color: white;
 }
+
+.select{
+  width: 200px;
+}
+
+.select button{
+  width: 50%;
+  padding: 10px;
+}
+
+.scrollparent{
+  height: 10px;
+  background-color: white;
+}
+
+.scrollparent div{
+  width: 50%;
+  height: inherit;
+  background-color: black;
+}
+
+.largeparent{
+  display: flex;
+  margin: 30px;
+}
+
+.largeparent img{
+  width: 50%;
+  flex: 1;
+  height: 90vh;
+}
+
+.loginform{
+  background-color: pink;
+  flex: 1;
+  padding: 20px;
+}
+
+@media screen and (max-width : 800px) {
+  .hideonmobile{
+    display: none;
+  }
+}

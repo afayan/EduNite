@@ -107,6 +107,11 @@ function Login() {
     setError('')
     setSuccess('')
 
+    gsap.to('.scrollparent div', {
+      x: '0%'
+    })
+
+
     gsap.fromTo('.loginparent', {
       y: -10,
       opacity: 0
@@ -127,6 +132,10 @@ function Login() {
     setError('')
     setSuccess('')
 
+    gsap.to('.scrollparent div', {
+      x: '100%'
+    })
+
     gsap.fromTo('.loginparent', {
       y: -10,
       opacity: 0
@@ -139,11 +148,21 @@ function Login() {
 
   return (
     <>
-    <div className="parent">
 
-      <div>
+    <div className="largeparent">
+
+    <img src="/pink.jpg" alt="" className="hideonmobile"/>
+    
+
+    <div className="loginform">
+
+      <div className="select">
         <button onClick={openlogin}>Login</button>
         <button onClick={opensignup}>Sign Up</button>
+
+        <div className="scrollparent">
+          <div></div>
+        </div>
       </div>
 
       <div className="loginparent">
@@ -182,6 +201,8 @@ function Login() {
         )}
 
       </div>
+      </div>
+
       </div>
     </>
   );
