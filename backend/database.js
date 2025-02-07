@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv'
 
-mongoose.connect('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.4', {dbName: 'Edunite'})
+dotenv.config()
+
+mongoose.connect(process.env.MONGO_URL, {dbName: 'Edunite'})
 
 const userschema = new mongoose.Schema({
     username : {
