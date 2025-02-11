@@ -22,7 +22,4 @@ const userschema = new mongoose.Schema({
 
 const usermodel = mongoose.model("users", userschema)
 
-console.log("MongoDB connected");
-
-
 export default usermodel
