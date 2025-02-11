@@ -89,29 +89,21 @@ app.post('/api/enroll',async (req, res) => {
   res.json({status : true, message : "Enrolled"})
 })
 
-app.post('/api/showmycourses',async (req, res)=>{
-
+app.post('/api/showmycourses', async (req, res) => {
   //beta
+  const { userid } = req.body;
 
-  const {userid} = req.body
-  const enrolled = await enrolledmodel.find({userid : userid})
-  const courses = await coursemodel.find()
+  const enrolled = await enrolledmodel.find({ userid: userid });
+  const courses = await coursemodel.find();
 
-  var result = []
+  const courseMap = new Map(courses.map(c => [c._id.toString(), c]));
 
-  enrolled.forEach((e)=>{
-    courses.forEach((c)=>{
-      if (e.courseid == c._id.toString()) {
-        if (!result.includes(c)) {
-          result.push(c)
-        }
-      }
-    })
-  })
-  
-  res.json({status : true, message : result})
+  const result = enrolled
+    .map(e => courseMap.get(e.courseid))
+    .filter(course => course); 
+  res.json({ status: true, message: result });
+});
 
-})
 
 app.listen(port, (req, res) => {
   console.log("App is running on port " + port);
