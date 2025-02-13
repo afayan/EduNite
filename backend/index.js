@@ -56,7 +56,7 @@ app.post("/api/login", async (req, res) => {
   
 
   if (user) {
-    res.json({ status: true, message: "Success", user: user });
+    res.json({ status: true, message: "Success", token: user });
   }
 
   else{
@@ -103,6 +103,11 @@ app.post('/api/showmycourses', async (req, res) => {
     .filter(course => course); 
   res.json({ status: true, message: result });
 });
+
+app.post('/api/checklogin', async (req, res) =>{
+  const a = req.body
+  res.json({ status : true, data : a})
+})
 
 
 app.listen(port, (req, res) => {

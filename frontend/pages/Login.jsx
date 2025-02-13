@@ -1,11 +1,13 @@
 import React, { useRef, useState } from "react";
 import gsap from 'gsap'
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setloading] = useState(false);
   const [showlogin, setShowLogin] = useState(true)
+  const navigate = useNavigate()
 
   const loginemail = useRef();
   const loginpassword = useRef();
@@ -54,6 +56,7 @@ function Login() {
     if (data.status) {
       //true
       setSuccess(data.message);
+      
     } else {
       setError(data.message);
     }
@@ -92,6 +95,12 @@ function Login() {
     if (data.status) {
       //true
       setSuccess(data.message);
+      
+      sessionStorage.setItem('auth', JSON.stringify(data.token))
+      console.log(sessionStorage.getItem('auth'));
+
+      navigate('/dashboard')
+
     } else {
       setError(data.message);
     }
