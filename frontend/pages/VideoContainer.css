@@ -1,0 +1,41 @@
+.videocontainer{
+    padding: 50px;
+}
+
+.videopage{
+ display: flex;
+}
+
+.leftside{
+ display: flex;
+ flex-direction: column;
+}
+
+.playlistdiv{
+    background-color: rgb(60, 60, 60);
+    flex: 1;
+}
+
+.playlistelement{
+    padding: 20px;
+    background-color: rgb(29, 107, 176);
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.commentsdiv{
+    background-color: rgb(78, 78, 78);
+}
+
+.commentsdiv input{
+    padding: 10px;
+    margin: 10px;
+}
+
+.comment{
+    background-color: green;
+    padding: 10px;
+    width: max-content;
+    border-radius: 10px;
+    margin: 10px;
+}

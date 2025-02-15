@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom'
 import Login from '../pages/Login'
 import Dashboard from '../pages/Dashboard'
 import Landing from '../pages/Landing'
+import VideoPage from '../pages/VideoPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +18,7 @@ function App() {
       <Route path='/login' element={<Login/>} />
       <Route path='/dashboard' element={<Dashboard/>} />
       <Route path='/landing' element={<Landing/>} />
+      <Route path='/video/:course/:video' element={<VideoPage/>}/>
       </Routes>
     </>
   )
