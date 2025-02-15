@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import AboutUs from "./components/about";
 
+//This is a USELESS FILE
+
 function App() {
   return (
     <Router>

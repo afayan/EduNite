@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import express, { json } from "express";
-import usermodel from "./database.js";
+import usermodel from "./dbs/users.js";
 import coursemodel from "./dbs/coursesdb.js";
 import enrolledmodel from "./dbs/enrolled.js";
+import commentsmodel from "./dbs/comments.js";
 // import db from "./SQL.js";
 
 const app = express();
@@ -107,7 +108,34 @@ app.post('/api/checklogin', async (req, res) =>{
   res.json({ status : true, data : a})
 })
 
+app.post('/api/addcomment', async (req, res)=>{
+  const {user, video, comment} = req.body
+  const newcomment = new commentsmodel({videodata : video, comment : comment, user : user})
+  await newcomment.save()
+  res.json({status : true})
+})
+
+app.get('/api/getcomments/:video', async (req, res) => {
+  const video = req.params.video
+
+  const comments = await commentsmodel.find({videodata : video})
+  const users = await usermodel.find()
+
+  const usersmap = new Map(users.map(u => [u._id.toString(), u.username]))
+  
+  comments.forEach((c)=>{
+    c.user = usersmap.get(c.user)
+    // console.log(typeof(c.date), c.date.toDateString());    
+  })
+
+  res.json({status : true, updateddata : comments})
+})
+
+// async function leftjoin(table1, table2, commonkey){
+//   const table2map = new Map(table2.map(t => [t, t]))
+// }
 
 app.listen(port, (req, res) => {
   console.log("App is running on port " + port);
 });
+

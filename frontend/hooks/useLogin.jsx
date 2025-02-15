@@ -33,7 +33,7 @@ function useLogin() {
         
             if (data.status) {
                 setIsLogged(true)
-                setuserid(data.user)
+                setuserid(data.data)
             }
         
             setChecking(false)
