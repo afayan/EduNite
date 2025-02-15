@@ -16,7 +16,7 @@ const Navbar = () => {
         <Link to="/about">About Us</Link>
 
         {!loading && !islogged && <Link to="/login">Login</Link>}
-       {!loading && !islogged && <Link to="/signup">Signup</Link>}
+       {!loading && !islogged && <Link to="/login">Signup</Link>}
       </div>
     </nav>
   );

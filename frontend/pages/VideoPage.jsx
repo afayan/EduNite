@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import './VideoContainer.css'
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useLogin from "../hooks/useLogin";
 
 function VideoPage() {
@@ -9,6 +9,7 @@ function VideoPage() {
     const [comments, setComments] = useState([])
     const [loading, userid, islogged] = useLogin()
     const commentref = useRef()
+    const navigate = useNavigate()
 
     useEffect((()=>{
 
@@ -19,7 +20,8 @@ function VideoPage() {
         }
 
         if (!loading && !islogged) {
-            alert("NOT VALID USER")
+            navigate('/login')
+            return
         }
 
         if (!course || !video || !userid.email){

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import gsap from 'gsap'
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function Login() {
   const [error, setError] = useState(false);
@@ -157,7 +158,6 @@ function Login() {
 
   return (
     <>
-
     <div className="largeparent">
 
     <img src="/pink.jpg" alt="" className="hideonmobile"/>
