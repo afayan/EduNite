@@ -5,6 +5,7 @@ import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import Login from '../pages/Login'
 import Dashboard from '../pages/Dashboard'
+import Landing from '../pages/Landing'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -15,7 +16,7 @@ function App() {
       <Route path='*' element={<Login/>} />
       <Route path='/login' element={<Login/>} />
       <Route path='/dashboard' element={<Dashboard/>} />
-
+      <Route path='/landing' element={<Landing/>} />
       </Routes>
     </>
   )

@@ -1,10 +1,8 @@
 import dotenv from "dotenv";
 import express, { json } from "express";
-import mysql from "mysql2";
 import usermodel from "./database.js";
 import coursemodel from "./dbs/coursesdb.js";
 import enrolledmodel from "./dbs/enrolled.js";
-import mongoose from "mongoose";
 // import db from "./SQL.js";
 
 const app = express();
