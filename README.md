@@ -14,10 +14,32 @@ MONGO_URL='<YOUR MONGODB URL>'
 npm install
 ```
 on BOTH the terminals
+
 6. Run
 ```
 npm run dev
 ```
 on BOTH the terminals
+
 7. repeat ONLY step 4 and step 6 when you want to run code again later
 
+
+## The UseLogin hook (devs)
+
+hook used to check if user if logged or not
+
+uselogin hook returns an array with loading, userid and islogged
+```
+const [loading, userid, islogged] = useLogin()
+```
+
+loading - true if program is currently checking
+userid - returns a json file with json data. Check it only after loading = false
+islogged - returns true if user is logged or else false. Check only after loading = false
+
+how to check if user is logged in:
+```
+!loading && islogged
+```
+
+the useLogin hook uses sessionstorage
