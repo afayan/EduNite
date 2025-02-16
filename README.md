@@ -34,7 +34,9 @@ const [loading, userid, islogged] = useLogin()
 ```
 
 loading - true if program is currently checking
+
 userid - returns a json file with json data. Check it only after loading = false
+
 islogged - returns true if user is logged or else false. Check only after loading = false
 
 how to check if user is logged in:
