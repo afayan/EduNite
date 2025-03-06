@@ -222,3 +222,12 @@ app.post("/api/update-password", async (req, res) => {
     res.json({ status: false, message: "Error updating password", error });
   }
 });
+
+app.get('/api/allcourses',async (req, res) => {
+  const courseData = await coursemodel.find({})
+  res.json({ status : true, courses : courseData})  
+})
+
+app.post('/api/fun', (req, res)=>{
+  res.json({message : "Fun"})
+})
