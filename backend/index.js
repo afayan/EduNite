@@ -1,141 +1,224 @@
 import dotenv from "dotenv";
-import express, { json } from "express";
+dotenv.config();
+
+import express from "express";
+import mongoose from "mongoose"; 
 import usermodel from "./dbs/users.js";
 import coursemodel from "./dbs/coursesdb.js";
 import enrolledmodel from "./dbs/enrolled.js";
 import commentsmodel from "./dbs/comments.js";
-// import db from "./SQL.js";
+import bcrypt from "bcryptjs"; 
+
+
+
+
 
 const app = express();
-
-
-dotenv.config();
 app.use(express.json());
+
 const port = process.env.PORT || 9000;
 
-app.post("/api/signup",async (req, res) => {
-  const { email, password, username } = req.body;
 
-  if (!email || !password || !username) {
-    return res.json({status : false, message : "Please fill all fields"})
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.log("MongoDB connection error:", err));
+
+//  Added GET route to fetch user by email
+app.get("/api/get-user", async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.json({ status: false, message: "Email is required" });
   }
 
   try {
-    const result = new usermodel({ email, username, password})
-    await result.save()
-  
-    console.log(result);
-    
-    res.json({status : true, message : "Sign Up complete!"})
+    const user = await usermodel.findOne({ email });
+
+    if (!user) {
+      return res.json({ status: false, message: "User not found" });
+    }
+
+    res.json({ status: true, user });
   } catch (error) {
-
-    if (error.code === 11000){
-      return res.json({status : false, message : "Email not unique", err : error})
-    }
-
-    if (error.name === 'ValidationError'){
-      return res.json({status : false, message : "Invalid data", err : error})
-    }
+    res.json({ status: false, message: "Error fetching user", error });
   }
 });
 
+// Secure Sign-up with password hashing
+app.post("/api/signup", async (req, res) => {
+  const { email, password, username } = req.body;
+
+  if (!email || !password || !username) {
+    return res.json({ status: false, message: "Please fill all fields" });
+  }
+
+  try {
+    const existingUser = await usermodel.findOne({ email });
+    if (existingUser) {
+      return res.json({ status: false, message: "Email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new usermodel({ email, username, password: hashedPassword });
+    await newUser.save();
+
+    res.json({ status: true, message: "Sign Up complete!" });
+  } catch (error) {
+    res.json({ status: false, message: "Error signing up", error });
+  }
+});
+
+// Secure Login with password verification
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.json({status : false, message : "Please fill all fields"})
+    return res.json({ status: false, message: "Please fill all fields" });
   }
 
-  const user = await usermodel.findOne({
-    email : email,
-    password : password
-  })
+  try {
+    const user = await usermodel.findOne({ email });
 
-  console.log(user);
-  
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.json({ status: false, message: "Invalid credentials" });
+    }
 
-  if (user) {
-    res.json({ status: true, message: "Success", token: user });
+    res.json({ status: true, message: "Login successful", user });
+  } catch (error) {
+    res.json({ status: false, message: "Error logging in", error });
   }
-
-  else{
-    res.json({ status: false, message: "Invalid credentials",  });
-  }
-  
 });
 
-app.post('/api/addcourse',async (req, res) => {
-  //beta
-  const { cname, category, faculty} = req.body
+//  Add a new course
+app.post("/api/addcourse", async (req, res) => {
+  const { cname, category, faculty } = req.body;
 
+  if (!cname || !category || !faculty) {
+    return res.json({ status: false, message: "All fields are required" });
+  }
 
-  const courseresult = new coursemodel({cname : cname,faculty: faculty, category: category})
+  try {
+    const newCourse = new coursemodel({ cname, category, faculty });
+    await newCourse.save();
+    res.json({ status: true, message: "Course created", details: newCourse });
+  } catch (error) {
+    res.json({ status: false, message: "Error creating course", error });
+  }
+});
 
-  await courseresult.save()
+//  Enroll a user in a course
+app.post("/api/enroll", async (req, res) => {
+  const { userid, courseid } = req.body;
 
-  res.json({status : true, message : "Course created", details : courseresult})
+  if (!userid || !courseid) {
+    return res.json({ status: false, message: "User ID and Course ID are required" });
+  }
 
-})
+  try {
+    const enrollment = new enrolledmodel({ userid, courseid });
+    await enrollment.save();
+    res.json({ status: true, message: "Enrolled successfully" });
+  } catch (error) {
+    res.json({ status: false, message: "Error enrolling", error });
+  }
+});
 
-app.post('/api/enroll',async (req, res) => {
-  //beta
-
-  const {userid , courseid} = req.body
-
-  const newenrolled = new enrolledmodel({userid : userid, courseid: courseid})
-  await newenrolled.save()
-
-  res.json({status : true, message : "Enrolled"})
-})
-
-app.post('/api/showmycourses', async (req, res) => {
-  //beta
+//  Show courses enrolled by a user
+app.post("/api/showmycourses", async (req, res) => {
   const { userid } = req.body;
 
-  const enrolled = await enrolledmodel.find({ userid: userid });
-  const courses = await coursemodel.find();
+  if (!userid) {
+    return res.json({ status: false, message: "User ID is required" });
+  }
 
-  const courseMap = new Map(courses.map(c => [c._id.toString(), c]));
+  try {
+    const enrolledCourses = await enrolledmodel.find({ userid });
+    const allCourses = await coursemodel.find();
+    const courseMap = new Map(allCourses.map((c) => [c._id.toString(), c]));
 
-  const result = enrolled
-    .map(e => courseMap.get(e.courseid))
-    .filter(course => course); 
-  res.json({ status: true, message: result });
+    const result = enrolledCourses.map((e) => courseMap.get(e.courseid)).filter((course) => course);
+
+    res.json({ status: true, message: "Enrolled courses retrieved", courses: result });
+  } catch (error) {
+    res.json({ status: false, message: "Error fetching courses", error });
+  }
 });
 
-app.post('/api/checklogin', async (req, res) =>{
-  const a = req.body
-  res.json({ status : true, data : a})
-})
+//  Add a comment
+app.post("/api/addcomment", async (req, res) => {
+  const { user, video, comment } = req.body;
 
-app.post('/api/addcomment', async (req, res)=>{
-  const {user, video, comment} = req.body
-  const newcomment = new commentsmodel({videodata : video, comment : comment, user : user})
-  await newcomment.save()
-  res.json({status : true})
-})
+  if (!user || !video || !comment) {
+    return res.json({ status: false, message: "All fields are required" });
+  }
 
-app.get('/api/getcomments/:video', async (req, res) => {
-  const video = req.params.video
-
-  const comments = await commentsmodel.find({videodata : video})
-  const users = await usermodel.find()
-
-  const usersmap = new Map(users.map(u => [u._id.toString(), u.username]))
-  
-  comments.forEach((c)=>{
-    c.user = usersmap.get(c.user)
-    // console.log(typeof(c.date), c.date.toDateString());    
-  })
-
-  res.json({status : true, updateddata : comments})
-})
-
-// async function leftjoin(table1, table2, commonkey){
-//   const table2map = new Map(table2.map(t => [t, t]))
-// }
-
-app.listen(port, (req, res) => {
-  console.log("App is running on port " + port);
+  try {
+    const newComment = new commentsmodel({ videodata: video, comment, user });
+    await newComment.save();
+    res.json({ status: true, message: "Comment added successfully" });
+  } catch (error) {
+    res.json({ status: false, message: "Error adding comment", error });
+  }
 });
 
+//  Get comments for a specific video
+app.get("/api/getcomments/:video", async (req, res) => {
+  const video = req.params.video;
+
+  try {
+    const comments = await commentsmodel.find({ videodata: video });
+    const users = await usermodel.find();
+    const usersMap = new Map(users.map((u) => [u._id.toString(), u.username]));
+
+    comments.forEach((c) => {
+      c.user = usersMap.get(c.user);
+    });
+
+    res.json({ status: true, comments });
+  } catch (error) {
+    res.json({ status: false, message: "Error fetching comments", error });
+  }
+});
+
+// Check login (testing endpoint)
+app.post("/api/checklogin", async (req, res) => {
+  res.json({ status: true, data: req.body });
+});
+//  Start the server
+app.listen(port, () => {
+  console.log(`App is running on port ${port}`);
+});
+
+// update password route
+app.post("/api/update-password", async (req, res) => {
+  console.log(req.body);
+  const { email, oldPassword, newPassword } = req.body;
+
+  if (!email || !oldPassword || !newPassword) {
+    return res.json({ status: false, message: "All fields are required" });
+  }
+
+  try {
+    const user = await usermodel.findOne({ email });
+
+    if (!user) {
+      return res.json({ status: false, message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.json({ status: false, message: "Old password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ status: true, message: "Password updated successfully" });
+  } catch (error) {
+    res.json({ status: false, message: "Error updating password", error });
+  }
+});

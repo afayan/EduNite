@@ -97,7 +97,7 @@ function Login() {
       //true
       setSuccess(data.message);
       
-      sessionStorage.setItem('auth', JSON.stringify(data.token))
+      sessionStorage.setItem('auth', JSON.stringify(data.user)); // Store user details instead of just token
       console.log(sessionStorage.getItem('auth'));
 
       navigate('/dashboard')

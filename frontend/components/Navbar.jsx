@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom"; // Importing Link for navigation
 import "../pages/Landing.css";
 import useLogin from "../hooks/useLogin";
 
@@ -14,7 +14,7 @@ const Navbar = () => {
       </div>
       <div className="menu">
         <Link to="/about">About Us</Link>
-
+        {!loading && islogged &&<Link to="/profile">Profile</Link>}
         {!loading && !islogged && <Link to="/login">Login</Link>}
        {!loading && !islogged && <Link to="/login">Signup</Link>}
       </div>

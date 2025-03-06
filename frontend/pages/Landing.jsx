@@ -4,7 +4,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import HeroSection from "../components/HeroSection.jsx";
-// import AboutUs from "../components/about";
+// import AboutUs from "/pages/AboutUs.jsx";
 
 function Landing() {
   return (

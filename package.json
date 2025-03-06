@@ -1,0 +1,12 @@
+{
+  "name": "edunite",
+  "version": "1.0.0",
+  "description": "1. Navigate to the backend folder\r 2. Create a .env file right beside the index.js file\r 3. Create .env file with variable names EXACTLY like this\r ```\r PORT = 9000\r MONGO_URL='<YOUR MONGODB URL>'\r ```\r 4. create 2 terminals, navigate one terminal inside backend folder and one in frontend folder\r 5. Run \r ```\r npm install\r ```\r on BOTH the terminals",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
