@@ -10,6 +10,11 @@ function VideoPage() {
     const [loading, userid, islogged] = useLogin()
     const commentref = useRef()
     const navigate = useNavigate()
+    const [vurl, setvurl] = useState(null)
+    const [vdata, setvdata] = useState(null)
+    const [title, settitle] = useState('Loading')
+    const [videos, setvideos] = useState([])
+    
 
     useEffect((()=>{
 
@@ -32,15 +37,48 @@ function VideoPage() {
         //work on course and video 
         // addComment(userid._id, video, "I love you")
         getcomments(video)
+        getVideodata(video)
+        getVideos(course)
         
 
     }), [course, video, islogged, loading])
+
+    async function getVideos(cid) {
+        console.log(cid);
+        
+        const resp = await fetch('/api/getvideos/'+cid)
+        const data = await resp.json()
+        console.log(data["videos"]);
+        
+        setvideos(data["videos"])
+      } 
+
+    async function getVideodata(video) {
+
+        //need other videos in playlist
+        //need data for video
+        
+        const response = await fetch('/api/video/'+video)
+        const data = await response.json()
+
+        console.log(data);
+        
+        if (data.status) {
+            setvurl(data.data[0].videoUrl)
+            console.log(data.data[0]);
+            settitle(data.data[0].title)
+            
+        }
+
+    }
 
 
     async function getcomments(video) {
         const result = await fetch('/api/getcomments/'+video)
         const data = await result.json()
         if (data.status) {
+            console.log(data.updateddata);
+            
             setComments(data.updateddata)
         }
     }
@@ -88,20 +126,10 @@ function VideoPage() {
 
     <div className="leftside">
 
+    <h1>{title}</h1>
 
     <div className="videocontainer">
-
-      <iframe
-        width="900"
-        height="520"
-        src="https://www.youtube.com/embed/rm3i6cIxcFE?si=7TGzHxVehtp5sksY"
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
-      ></iframe>
-
+      <video src={vurl} controls></video>
     </div>
 
     <div className="commentsdiv">
@@ -113,7 +141,7 @@ function VideoPage() {
         {
             comments.map((c)=>{
                 let d = new Date(c.date)
-                return <div className="comment"><p>{c.user}</p> {c.comment}
+                return <div key={c._id} className="comment"><p>{c.user}</p> {c.comment}
                 <p>{d.toDateString()}</p>
                 </div>
             })
@@ -127,13 +155,12 @@ function VideoPage() {
 
     <div className="playlistdiv">
 
-        <h1>My Videos</h1>
+        <h1>Others in the playlist</h1>
 
-        <div className="playlistelement">Video</div>
-        <div className="playlistelement">Video</div>
-        <div className="playlistelement">Video</div>
-        <div className="playlistelement">Video</div>
-        <div className="playlistelement">Video</div>
+        {videos.map((v)=>{
+
+            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v._id}><p>{v.title}</p></div>
+        })}
     </div>
     </div>
   );

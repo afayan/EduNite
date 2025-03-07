@@ -10,6 +10,7 @@ import VideoPage from '../pages/VideoPage'
 import ProfilePage from '../pages/ProfilePage';
 import AddCourse from '../pages/AddCourse'
 import Upload from '../pages/Upload'
+import Course from '../pages/Course'
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
       <Route path='/profile' element={<ProfilePage/>} />
       <Route path='/addcourse' element={<AddCourse/>} />
       <Route path='/upload' element={<Upload/>} />
+      <Route path='/course/:cid' element={<Course/>} />
       </Routes>
     </>
   )

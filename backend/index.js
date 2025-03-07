@@ -8,6 +8,7 @@ import coursemodel from "./dbs/coursesdb.js";
 import enrolledmodel from "./dbs/enrolled.js";
 import commentsmodel from "./dbs/comments.js";
 import adminModel from "./dbs/admins.js";
+import videomodel from "./dbs/videos.js";
 import bcrypt from "bcryptjs"; 
 import multer from "multer";
 import { v2 as cloudinary} from "cloudinary"
@@ -215,7 +216,7 @@ app.get("/api/getcomments/:video", async (req, res) => {
       c.user = usersMap.get(c.user);
     });
 
-    res.json({ status: true, comments });
+    res.json({ status: true, updateddata : comments });
   } catch (error) {
     res.json({ status: false, message: "Error fetching comments", error });
   }
@@ -273,11 +274,58 @@ app.post('/api/fun', (req, res)=>{
 app.post("/api/upload", upload.single("video"), async (req, res) => {
   try {
     const videoUrl = req.file.path; // Cloudinary video URL
-    res.json({ success: true, url: videoUrl });
+
+    const {title, courseid, description} = req.body
+
+    console.log("video uploaded");
+    
+    if (!videoUrl) {
+      return res.json({ success: false, message: "unable to upload video" });
+    }
+
+    
+
+    const newvideo = new videomodel({title, 
+      videoUrl, courseid, description
+    })
+
+    await newvideo.save()
+
+    console.log("video saved");
+    
+
+    return res.json({ success: true, url: videoUrl });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return res.json({ success: false, message: err.message });
   }
 });
+
+app.get("/api/getvideos/:cid",async (req, res)=>{
+  const cid = req.params.cid
+
+  if (!cid){
+    return res.json({})
+  }
+
+
+  const videos = await videomodel.find({courseid : cid})
+
+  return res.json({videos})
+
+
+})
+
+app.get('/api/video/:vid',async (req, res)=>{
+  const vid = req.params.vid
+
+  const videodata = await videomodel.find({
+    _id : vid
+  })
+
+  
+
+  res.json({status : true ,data : videodata})
+})
 
 function checkAdmin(req, res, next) {
   

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import useLogin from '../hooks/useLogin'
 import './Dashboard.css'
+import { useNavigate } from 'react-router-dom'
+
 
 function Dashboard() {
 
@@ -10,6 +12,7 @@ function Dashboard() {
   const [mycourses, setMycourses] = useState([])
   const [morecourses, setmorecourses] = useState([])
   const [dloading, setdloading] = useState(true)
+  const navigate = useNavigate()
 
   if (!checking && !islogged) {
     alert("Not logged")
@@ -124,7 +127,7 @@ function Dashboard() {
         <h2>My Courses</h2>
         <div className="courses-container">
           {mycourses.map(course => (
-            <div key={course._id} className="course-card">
+            <div onClick={()=>navigate('/course/'+ course._id)} key={course._id} className="course-card">
               <div className="course-image">
                 <img src={course.image} alt={course.cname} />
                 <div className="progress-bar">
