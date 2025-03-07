@@ -70,6 +70,10 @@ function VideoPage() {
             
         }
 
+        else{
+            navigate('/')
+        }
+
     }
 
 

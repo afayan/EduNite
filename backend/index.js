@@ -316,15 +316,30 @@ app.get("/api/getvideos/:cid",async (req, res)=>{
 })
 
 app.get('/api/video/:vid',async (req, res)=>{
-  const vid = req.params.vid
 
-  const videodata = await videomodel.find({
-    _id : vid
-  })
+  try {
 
+    const vid = req.params.vid
+
+
+    const videodata = await videomodel.find({
+      _id : vid
+    })
+
+
+    if (videodata.length === 0) {
+      return res.json({status : false})
+    }
   
+    return res.json({status : true ,data : videodata})  
 
-  res.json({status : true ,data : videodata})
+  } catch (error) {
+    
+    return res.json({status : false, err : error})
+
+  }
+
+
 })
 
 function checkAdmin(req, res, next) {
