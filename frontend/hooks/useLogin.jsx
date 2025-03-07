@@ -5,6 +5,7 @@ function useLogin() {
     const [checking, setChecking] = useState(true)
     const [userid, setuserid] = useState(null)
     const [islogged, setIsLogged] = useState(false)
+    const [admin , setadmin] = useState(false)
 
     useEffect(()=>{
 
@@ -30,10 +31,19 @@ function useLogin() {
             })
         
             const data = await result.json()
+
+            console.log(data);
         
             if (data.status) {
+
+                
+                
+
                 setIsLogged(true)
                 setuserid(data.data)
+                setadmin(data.data.admin)
+                console.log(data.data.admin);
+                
             }
         
             setChecking(false)
@@ -43,7 +53,7 @@ function useLogin() {
     }, [])
 
 
-    return [checking, userid, islogged]
+    return [checking, userid, islogged, admin]
 
 }
 

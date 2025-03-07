@@ -11,6 +11,7 @@ import ProfilePage from '../pages/ProfilePage';
 import AddCourse from '../pages/AddCourse'
 import Upload from '../pages/Upload'
 import Course from '../pages/Course'
+import AdminLogin from '../pages/AdminLogin'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
       <Route path='/addcourse' element={<AddCourse/>} />
       <Route path='/upload' element={<Upload/>} />
       <Route path='/course/:cid' element={<Course/>} />
+      <Route path='admin' element={<AdminLogin/>} />
       </Routes>
     </>
   )

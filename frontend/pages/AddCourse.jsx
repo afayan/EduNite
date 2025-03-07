@@ -1,5 +1,7 @@
 import React, { useRef } from 'react'
 import './AddCourse.css'
+import useLogin from '../hooks/useLogin'
+import { useNavigate } from 'react-router-dom'
 
 function AddCourse() {
 
@@ -7,6 +9,14 @@ function AddCourse() {
     const facref = useRef(0)
     const subjectref = useRef(0)
     const descref = useRef(0)
+    const [checking, userid, islogged, admin] = useLogin()
+    const navigate = useNavigate()
+
+
+    if (!checking && !admin) {
+        navigate('/')
+    }
+
 
     async function addCourse() {
 

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 function Dashboard() {
 
-  const [checking, userid, islogged] = useLogin()
+  const [checking, userid, islogged, admin] = useLogin()
 
   const [courseProg, setCourseProgs] = useState([])
   const [mycourses, setMycourses] = useState([])
@@ -15,6 +15,12 @@ function Dashboard() {
   const navigate = useNavigate()
 
   if (!checking && !islogged) {
+
+    if (admin) {
+      navigate('/')
+      alert("admin")
+    }
+
     alert("Not logged")
   }
 

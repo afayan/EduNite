@@ -105,13 +105,18 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
-    const user = await usermodel.findOne({ email });
+    const user = await usermodel.findOne({ email }).lean();
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.json({ status: false, message: "Invalid credentials" });
     }
 
-    res.json({ status: true, message: "Login successful", user });
+    user.admin = false
+
+    console.log(user);
+    
+
+    res.json({ status: true, message: "Login successful", user : user });
   } catch (error) {
     res.json({ status: false, message: "Error logging in", error });
   }
@@ -339,6 +344,72 @@ app.get('/api/video/:vid',async (req, res)=>{
 
   }
 
+
+})
+
+
+app.post('/api/adminlogin', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email and password are required' 
+      });
+    }
+
+    // Find admin by email
+    const admin = await adminModel.findOne({ email });
+    console.log(admin);
+    
+    
+    if (!admin) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid email or password' 
+      });
+    }
+
+    // Assuming passwords are stored as hashed in the database
+    // If not, you would need to modify this check
+    // const isPasswordValid = await bcrypt.compare(password, admin.password);
+    const isPasswordValid = password === admin.password
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid email or password' 
+      });
+    }
+
+    // Return success with token
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      admin: {
+        _id: admin._id,
+        username: admin.username,
+        email: admin.email,
+        admin : true
+      }
+    });
+    
+  } catch (error) {
+    console.error('Admin login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+app.post('/api/getpriv',async (req, res)=>{
+
+  const {_id} = req.body._id
+
+  const user = await usermodel.findOne()
 
 })
 
