@@ -55,7 +55,6 @@ function Dashboard() {
 
 
   async function enroll(C_id) {
-    alert(C_id)
 
     const r1 = await fetch('/api/enroll', {
       method: 'post',

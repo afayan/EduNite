@@ -7,6 +7,7 @@ import usermodel from "./dbs/users.js";
 import coursemodel from "./dbs/coursesdb.js";
 import enrolledmodel from "./dbs/enrolled.js";
 import commentsmodel from "./dbs/comments.js";
+import adminModel from "./dbs/admins.js";
 import bcrypt from "bcryptjs"; 
 
 
@@ -94,17 +95,22 @@ app.post("/api/login", async (req, res) => {
 
 //  Add a new course
 app.post("/api/addcourse", async (req, res) => {
-  const { cname, category, faculty } = req.body;
+  const { cname, category, faculty , description} = req.body;
 
-  if (!cname || !category || !faculty) {
+  if (!cname || !category || !faculty || !description) {
     return res.json({ status: false, message: "All fields are required" });
   }
 
   try {
-    const newCourse = new coursemodel({ cname, category, faculty });
+    const newCourse = new coursemodel({ cname, category, faculty, description });
     await newCourse.save();
     res.json({ status: true, message: "Course created", details: newCourse });
   } catch (error) {
+
+    if (error.code === 11000) {
+      return res.json({ status: false, message: "Course already exists", error });  
+    }
+
     res.json({ status: false, message: "Error creating course", error });
   }
 });
@@ -113,8 +119,17 @@ app.post("/api/addcourse", async (req, res) => {
 app.post("/api/enroll", async (req, res) => {
   const { userid, courseid } = req.body;
 
+  
+
   if (!userid || !courseid) {
     return res.json({ status: false, message: "User ID and Course ID are required" });
+  }
+
+
+  const buffer = await enrolledmodel.find({userid : userid, courseid : courseid})
+
+  if (buffer.length > 0) {
+   return res.json({ status: false, message: "Already enrolled" });
   }
 
   try {
@@ -231,3 +246,10 @@ app.get('/api/allcourses',async (req, res) => {
 app.post('/api/fun', (req, res)=>{
   res.json({message : "Fun"})
 })
+
+
+function checkAdmin(req, res, next) {
+  
+  
+
+}

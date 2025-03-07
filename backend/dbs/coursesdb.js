@@ -9,7 +9,8 @@ const courseschema = new mongoose.Schema({
     cname : {
         type : String,
         required : true,
-        trim : true
+        trim : true,
+        unique : true
     },
     category : {
         type : String,
@@ -23,6 +24,9 @@ const courseschema = new mongoose.Schema({
     created : {
         type : Date,
         default : Date.now
+    },
+    description : {
+        type : String
     }
 })
 

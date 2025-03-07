@@ -1,0 +1,13 @@
+.inputform{
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: 50%;
+    transform: translate(50%, 30%);
+}
+
+.inputform input{
+    padding: 10px;
+}
