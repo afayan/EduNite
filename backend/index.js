@@ -9,7 +9,9 @@ import enrolledmodel from "./dbs/enrolled.js";
 import commentsmodel from "./dbs/comments.js";
 import adminModel from "./dbs/admins.js";
 import bcrypt from "bcryptjs"; 
-
+import multer from "multer";
+import { v2 as cloudinary} from "cloudinary"
+import {CloudinaryStorage} from 'multer-storage-cloudinary'
 
 
 
@@ -26,6 +28,27 @@ mongoose.connect(process.env.MONGO_URL, {
   })
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.log("MongoDB connection error:", err));
+
+
+  //cloudinary here
+
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
+  const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: "videos", // Cloudinary folder name
+      resource_type: "video", // Ensure it's a video upload
+    },
+  });
+
+  const upload = multer({ storage });
+
+
 
 //  Added GET route to fetch user by email
 app.get("/api/get-user", async (req, res) => {
@@ -247,6 +270,14 @@ app.post('/api/fun', (req, res)=>{
   res.json({message : "Fun"})
 })
 
+app.post("/api/upload", upload.single("video"), async (req, res) => {
+  try {
+    const videoUrl = req.file.path; // Cloudinary video URL
+    res.json({ success: true, url: videoUrl });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 function checkAdmin(req, res, next) {
   
