@@ -1,7 +1,22 @@
+:root{
+  --grad : linear-gradient(to right, rgb(108, 255, 231) , rgb(255, 248, 123));
+}
+
+#amdinlink{
+  border: none;
+
+  background-color: rgb(176, 178, 179);
+}
+
 .loginform{
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.loginform input{
+  background-color: rgb(226, 226, 226);
+  border: none;
 }
 
 button{
@@ -31,7 +46,7 @@ button{
 }
 
 #error{
-  background-color: red;
+  background-color: rgb(255, 92, 92);
   color: white;
 }
 
@@ -55,7 +70,8 @@ button{
 .scrollparent div{
   width: 50%;
   height: inherit;
-  background-color: black;
+  background-image: var(--grad);
+  border-radius: 10px;
 }
 
 .largeparent{
@@ -71,13 +87,18 @@ button{
 }
 
 .loginformlarge{
-  background-color: pink;
+  background-color: rgb(255, 255, 255);
   flex: 1;
   padding: 50px;
 }
 
 .largeparent input, button{
   padding: 10px;
+}
+
+#logbutton{
+  background-image: var(--grad);
+  border: none;
 }
 
 @media screen and (max-width : 800px) {

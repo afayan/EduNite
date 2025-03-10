@@ -14,6 +14,7 @@ function VideoPage() {
     const [vdata, setvdata] = useState(null)
     const [title, settitle] = useState('Loading')
     const [videos, setvideos] = useState([])
+    const [desc, setDesc] = useState('')
     
 
     useEffect((()=>{
@@ -67,6 +68,7 @@ function VideoPage() {
             setvurl(data.data[0].videoUrl)
             console.log(data.data[0]);
             settitle(data.data[0].title)
+            setDesc(data.data[0].description)
             
         }
 
@@ -130,11 +132,15 @@ function VideoPage() {
 
     <div className="leftside">
 
-    <h1>{title}</h1>
+    <h1 className="head1">{title}</h1>
 
     <div className="videocontainer">
       <video src={vurl} controls></video>
     </div>
+
+    <p className="desc">
+        {desc}
+    </p>
 
     <div className="commentsdiv">
 
@@ -163,7 +169,7 @@ function VideoPage() {
 
         {videos.map((v)=>{
 
-            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v._id}><p>{v.title}</p></div>
+            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v.title}><p>{v.title}</p></div>
         })}
     </div>
     </div>

@@ -1,3 +1,7 @@
+body{
+    background-color: white;
+}
+
 .uploadvideoform{
     display: flex;
     flex-direction: column;
@@ -13,6 +17,10 @@
     width: max-content;
 }
 
+.head1{
+    padding: 20px;
+}
+
 .videoflex{
     display: flex;
     flex-direction: column;
@@ -21,7 +29,9 @@
 }
 
 .videoflex div{
-    background-color: grey;
+    /* background-color: grey; */
+    color: rgb(60, 60, 60);
     padding: 10px;
     border-radius: 10px;
+    background-image: var(--grad);
 }

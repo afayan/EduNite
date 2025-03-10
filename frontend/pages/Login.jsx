@@ -160,14 +160,14 @@ function Login() {
     <>
     <div className="largeparent">
 
-    <img src="/pink.jpg" alt="" className="hideonmobile"/>
+    <img src="/lime.jpg" alt="" className="hideonmobile"/>
     
 
     <div className="loginformlarge">
 
       <div className="select">
-        <button onClick={openlogin}>Login</button>
-        <button onClick={opensignup}>Sign Up</button>
+        <button id="" onClick={openlogin}>Login</button>
+        <button id="" onClick={opensignup}>Sign Up</button>
 
         <div className="scrollparent">
           <div></div>
@@ -185,7 +185,7 @@ function Login() {
         <input disabled={loading} type="password" ref={passwordref} placeholder="password" />
         <input disabled={loading} type="password" ref={repeatpasswordref} placeholder="repeat password"
         />
-        <button disabled={loading} onClick={handleSignup}>
+        <button id="logbutton" disabled={loading} onClick={handleSignup}>
           Sign Up
         </button>
 
@@ -195,7 +195,10 @@ function Login() {
         <h2>Login</h2>
         <input disabled={loading} ref={loginemail} type="text" placeholder="email" />
         <input disabled={loading} ref={loginpassword} type="password" placeholder="password" />
-        <button disabled={loading} onClick={handleLogin}>Login</button>
+        <button id="logbutton" disabled={loading} onClick={handleLogin}>Login</button>
+
+        <button id="amdinlink" onClick={()=>navigate('/admin')}>Login as admin</button>
+
       </div>}
 
       {error && (

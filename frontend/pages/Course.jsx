@@ -36,7 +36,7 @@ function Course() {
   return (
     <>
     
-    Course
+    <h1 className='head1'> Course</h1>
 
     <div className="videoflex">
     {
