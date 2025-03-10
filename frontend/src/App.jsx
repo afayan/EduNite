@@ -3,15 +3,16 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
-import Login from '../pages/Login'
-import Dashboard from '../pages/Dashboard'
-import Landing from '../pages/Landing'
-import VideoPage from '../pages/VideoPage'
-import ProfilePage from '../pages/ProfilePage';
-import AddCourse from '../pages/AddCourse'
-import Upload from '../pages/Upload'
-import Course from '../pages/Course'
-import AdminLogin from '../pages/AdminLogin'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Landing from './pages/Landing'
+import VideoPage from './pages/VideoPage'
+import ProfilePage from './pages/ProfilePage';
+import AddCourse from './pages/AddCourse'
+import Upload from './pages/Upload'
+import Course from './pages/Course'
+import AdminLogin from './pages/AdminLogin'
+import Dummy from './pages/Dummy'
 
 
 function App() {
