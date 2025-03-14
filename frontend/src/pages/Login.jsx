@@ -200,6 +200,7 @@ function Login() {
         <button id="amdinlink" onClick={()=>navigate('/admin')}>Login as admin</button>
 
       </div>}
+      
 
       {error && (
           <p className="loginmessage" id="error">
