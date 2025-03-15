@@ -33,7 +33,7 @@ function VideoPage() {
         if (!course || !video || !userid.email){
             return
         }
-        console.log(loading, islogged, course, video, userid);
+        // console.log(loading, islogged, course, video, userid);
 
         //work on course and video 
         // addComment(userid._id, video, "I love you")
@@ -45,11 +45,23 @@ function VideoPage() {
     }), [course, video, islogged, loading])
 
     async function getVideos(cid) {
-        console.log(cid);
+        // console.log(cid);
+
+        if (!cid) {
+            return console.log("No course ID")
+        }
         
-        const resp = await fetch('/api/getvideos/'+cid)
+        const resp = await fetch('/api/getvideos/'+cid, {
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: userid._id,
+            })
+        })
         const data = await resp.json()
-        console.log(data["videos"]);
+        // console.log(data["videos"]);
         
         setvideos(data["videos"])
       } 
@@ -62,7 +74,7 @@ function VideoPage() {
         const response = await fetch('/api/video/'+video)
         const data = await response.json()
 
-        console.log(data);
+        // console.log(data);
         
         if (data.status) {
             setvurl(data.data[0].videoUrl)
@@ -83,7 +95,7 @@ function VideoPage() {
         const result = await fetch('/api/getcomments/'+video)
         const data = await result.json()
         if (data.status) {
-            console.log(data.updateddata);
+            // console.log(data.updateddata);
             
             setComments(data.updateddata)
         }
@@ -118,7 +130,7 @@ function VideoPage() {
         const data = await result.json()
 
 
-        console.log(data);
+        // console.log(data);
 
         commentref.current.value = ''
 
@@ -126,6 +138,36 @@ function VideoPage() {
         
     }
     
+
+    async function handleAction(action) {
+
+        // console.log(userid._id, video, action);
+        
+
+        try {
+            const response = await fetch('/api/action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: userid._id,
+                    video: video,
+                    action: action
+                })
+            });
+    
+            const data = await response.json();
+            console.log('Response:', data);
+
+            getVideos(course)
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    
+
 
   return (
     <div className="videopage">
@@ -136,6 +178,12 @@ function VideoPage() {
 
     <div className="videocontainer">
       <video src={vurl} controls></video>
+    </div>
+
+    <div className="buttonsdiv">
+        <button onClick={()=>handleAction('l')}>Like</button>
+        <button onClick={()=>handleAction('c')}>Complete</button>
+        <button onClick={()=>handleAction('d')}>Dislike</button>
     </div>
 
     <p className="desc">
@@ -169,7 +217,7 @@ function VideoPage() {
 
         {videos.map((v)=>{
 
-            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v.title}><p>{v.title}</p></div>
+            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v.title}><p>{v.title}</p><p>{v.completed?'done': 'not'}</p></div>
         })}
     </div>
     </div>

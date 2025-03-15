@@ -51,10 +51,15 @@ function AddCourse() {
         <input ref={cnameref} type="text" placeholder='Course name'/>
         <input ref={facref} type="text" placeholder='Faculty name'/>
         <select ref={subjectref} name="" id="" >
-        <option value="">Select course subject</option>
-            <option value="science">Science</option>
-            <option value="arts">Arts</option>
-            <option value="finance">Finance</option>
+            <option value="">Select course subject</option>
+            <option value="technology">Technology & IT</option>
+            <option value="business">Business & Management</option>
+            <option value="science">Science & Engineering</option>
+            <option value="arts">Arts & Humanities</option>
+            <option value="design">Design & Creativity</option>
+            <option value="health">Health & Medicine</option>
+            <option value="finance">Finance & Accounting</option>
+            <option value="personal_dev">Personal Development</option>
         </select>
         <textarea ref={descref} name="" id="" rows={5}></textarea>
         <button onClick={()=>addCourse()}>submit</button>

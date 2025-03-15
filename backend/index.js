@@ -9,6 +9,7 @@ import enrolledmodel from "./dbs/enrolled.js";
 import commentsmodel from "./dbs/comments.js";
 import adminModel from "./dbs/admins.js";
 import videomodel from "./dbs/videos.js";
+import actionmodel from "./dbs/completed.js";
 import bcrypt from "bcryptjs"; 
 import multer from "multer";
 import { v2 as cloudinary} from "cloudinary"
@@ -320,6 +321,91 @@ app.get("/api/getvideos/:cid",async (req, res)=>{
 
 })
 
+app.post("/api/getvideos/:cid", async (req, res) => {
+  try {
+    const cid = req.params.cid;
+    const { user } = req.body; // Extract user ID from request body
+
+    if (!cid) {
+      return res.json({});
+    }
+
+    // Fetch videos for the given course ID
+    const videos = await videomodel.find({ courseid: cid });
+
+    // Fetch user actions (liked, disliked, completed) for the given user ID
+    const actions = await actionmodel.find({ user });
+
+    // Map each video with its respective action
+    const videoData = videos.map((video) => {
+      const userAction = actions.find((action) => action.video === video._id.toString());
+
+      console.log("actinos is ",userAction);
+      
+
+      return {
+        ...video._doc, // Spread video object
+        liked: userAction?.action === "l" || false,
+        disliked: userAction?.action === "d" || false,
+        completed: userAction?.action === "c" || false,
+      };
+    });
+
+    return res.json({ videos: videoData });
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post('/api/getdashboardinfo', async (req, res) => {
+  try {
+      const { user } = req.body;
+
+      if (!user) {
+          return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Fetch user enrollment data
+      const enrolledCourses = await enrolledmodel.find({ userid: user });
+      const enrolledCourseIds = enrolledCourses.map(enrollment => enrollment.courseid);
+
+      // Most popular courses (sorted by number of enrollments)
+      const popularCourses = await enrolledmodel.aggregate([
+          { $group: { _id: "$courseid", count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 5 }
+      ]);
+
+      const popularCourseIds = popularCourses.map(course => course._id);
+      const popularCourseDetails = await coursemodel.find({ _id: { $in: popularCourseIds } });
+
+      // Fetch user's liked videos
+      const likedVideos = await actionmodel.find({ user: user, action: "l" });
+      const likedVideoIds = likedVideos.map(video => video.video);
+
+      // Extract unique course IDs from liked videos
+      const videos = await videomodel.find({ _id: { $in: likedVideoIds } });
+      const courseIds = [...new Set(videos.map(video => video.courseid))];
+
+      // Get course details for the liked videos
+      const interestedCourses = await coursemodel.find({ _id: { $in: courseIds } });
+
+
+      console.log(interestedCourses);
+      
+
+      res.json({
+          popularCourses: popularCourseDetails,
+          interestedCourses
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.get('/api/video/:vid',async (req, res)=>{
 
   try {
@@ -405,11 +491,55 @@ app.post('/api/adminlogin', async (req, res) => {
   }
 });
 
+app.post('/api/action',async (req, res)=>{
+  const {user, video, action} = req.body
+
+  const newaction = new actionmodel({
+    user, video, action
+  })
+
+  const buffer = await actionmodel.find({user, video, action})
+
+
+  if (!buffer.length){
+
+    await newaction.save()
+
+    return res.json({message : 'done'})
+
+  }
+
+  return res.json({message : 'already exists'})
+
+})
+
 app.post('/api/getpriv',async (req, res)=>{
 
   const {_id} = req.body._id
 
   const user = await usermodel.findOne()
+
+})
+
+app.get('/api/search/:query',async (req, res)=>{
+
+  const {query} = req.params
+
+  if (query === '') {
+    return res.json([])
+
+  }
+
+  const searchresults = await coursemodel.find({
+    $or: [
+        { cname: { $regex: new RegExp(query, "i") } },
+        { category: { $regex: new RegExp(query, "i") } },
+        { faculty: { $regex: new RegExp(query, "i") }},
+        { description: { $regex: new RegExp(query, "i") } } // Case-insensitive search in description
+    ]
+});
+
+res.json(searchresults)
 
 })
 

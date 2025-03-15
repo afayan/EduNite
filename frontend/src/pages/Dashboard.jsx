@@ -12,13 +12,16 @@ function Dashboard() {
   const [mycourses, setMycourses] = useState([])
   const [morecourses, setmorecourses] = useState([])
   const [dloading, setdloading] = useState(true)
+  const [popularCourses, setPC] = useState([])
+  const [interestedCourses, setIC] = useState([])
+  const [searchResults, setSearchResults] = useState([])
   const navigate = useNavigate()
 
   if (!checking && !islogged) {
 
     if (admin) {
-      navigate('/')
       alert("admin")
+      navigate('/')
     }
 
     alert("Not logged")
@@ -30,6 +33,7 @@ function Dashboard() {
     if (sessionStorage.getItem('auth')){
       
       getcourses()
+      getDashboardInfo(userid)
     }
 
     async function getcourses(){
@@ -58,6 +62,32 @@ function Dashboard() {
       
     }
 
+
+    async function getDashboardInfo(user) {
+      try {
+          const response = await fetch('/api/getdashboardinfo', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ user })
+          });
+  
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+  
+          const data = await response.json();
+          console.log('Dashboard Info:', data);
+
+          setPC(data?.popularCourses)
+          setIC(data?.interestedCourses)
+
+      } catch (error) {
+          console.error('Error fetching dashboard info:', error);
+      }
+  }
+  
     
 
   }, [userid])
@@ -83,50 +113,84 @@ function Dashboard() {
     
   }
 
-  const courseProgress = [
-    { id: 1, title: 'React Fundamentals', progress: 75 },
-    { id: 2, title: 'Advanced CSS', progress: 50 },
-    { id: 3, title: 'JavaScript ES6+', progress: 90 },
-    { id: 3, title: 'Nodejs', progress: 90 }
-  ];
+  async function search(e) {
 
-  // Sample data for my courses
-  const myCourses = [
-    { id: 1, cname: 'React Fundamentals', instructor: 'Jane Doe', completionRate: 75, image: '/api/placeholder/300/200' },
-    { id: 2, cname: 'Advanced CSS', instructor: 'John Smith', completionRate: 50, image: '/api/placeholder/300/200' },
-    { id: 3, cname: 'JavaScript ES6+', instructor: 'Alex Johnson', completionRate: 90, image: '/api/placeholder/300/200' }
-  ];
+    const q = e.target.value
 
-  // Sample data for more courses
-  const moreCourses = [
-    { _id: 4, cname: 'Node.js Basics', faculty: 'Sarah Williams', rating: 4.8, image: '/api/placeholder/300/200' },
-    { _id: 5, cname: 'Python for Beginners', faculty: 'Mike Brown', rating: 4.6, image: '/api/placeholder/300/200' },
-    { _id: 6, cname: 'UI/UX Design Principles', faculty: 'Lisa Chen', rating: 4.9, image: '/api/placeholder/300/200' },
-    { _id: 7, cname: 'Data Structures & Algorithms', faculty: 'Robert Miller', rating: 4.7, image: '/api/placeholder/300/200' }
-  ];
+    console.log(q);
+
+    if (q.trim() == '' ) {
+      setSearchResults([])
+    }
+
+    console.log(!q);
+    
+
+    
+    const r1 = await fetch('/api/search/'+q)
+
+    const d1 = await r1.json()
+
+    console.log(d1);
+    setSearchResults(d1)
+  }
 
   return (
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>Dashboard</h1>
-        <div className="user-profile">
-          <span className="username">User Name</span>
+        <div className="user-profile" onClick={()=>navigate('/profile')}>
+          <span className="username">My Profile</span>
           <div className="avatar-placeholder"></div>
         </div>
       </header>
 
+
+      <input type="text" placeholder='search courses' className='searchbar' onChange={(e)=>search(e)}/>
+
+      {
+        
+       searchResults.length ? <div className="searchresults">
+        {searchResults.map((s)=>{
+          return <div key={s.cname} className='result'>{s.cname}</div>
+        })}
+      </div> : <></>
+
+      }
+
       <section className="charts-section">
-        <h2>Your Progress</h2>
+
+        <span>
+
+        <h2>Popular Courses</h2>
         <div className="charts-container">
-          {courseProgress.map(course => (
+          {popularCourses.map(course => (
             <div key={course.id} className="chart-item">
-              <div className="chart-circle">
-                <div className="chart-value">{course.progress}%</div>
-              </div>
-              <p className="chart-title">{course.title}</p>
+              {/* <div className="chart-circle">
+                <div className="chart-value">{course.title}%</div>
+              </div> */}
+              <p className="chart-title">{course.cname}</p>
             </div>
           ))}
         </div>
+        </span>
+
+
+        <span>
+
+          <h2>Interested courses</h2>
+        <div className="charts-container">
+          {interestedCourses.map(course => (
+            <div key={course.id} className="chart-item">
+              {/* <div className="chart-circle">
+                <div className="chart-value">{course.title}%</div>
+              </div> */}
+              <p className="chart-title">{course.cname}</p>
+            </div>
+          ))}
+        </div>
+        </span>
+
       </section>
 
       <section className="my-courses-section">
@@ -137,10 +201,10 @@ function Dashboard() {
               <div className="course-image">
                 <img src={course.image} alt={course.cname} />
                 <div className="progress-bar">
-                  <div 
+                  {/* <div 
                     className="progress-fill" 
                     style={{ width: `${course.completionRate}%` }}>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="course-info">
