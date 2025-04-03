@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import './VideoContainer.css'
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useLogin from "../hooks/useLogin";
+import { SiTicktick } from "react-icons/si";
+
 
 function VideoPage() {
 
@@ -217,7 +219,8 @@ function VideoPage() {
 
         {videos.map((v)=>{
 
-            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v.title}><p>{v.title}</p><p>{v.completed?'done': 'not'}</p></div>
+            return <div onClick={()=>navigate('/video/' + course+"/" +v._id)} className={"playlistelement "+(v._id == video ? "selected" : '')} key={v.title}><p>{v.title}</p><p>{v.completed?<SiTicktick />
+                : ''}</p></div>
         })}
     </div>
     </div>

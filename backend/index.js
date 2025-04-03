@@ -173,7 +173,7 @@ app.post("/api/enroll", async (req, res) => {
 
 //  Show courses enrolled by a user
 app.post("/api/showmycourses", async (req, res) => {
-  const { userid } = req.body;
+  const { userid, admin } = req.body;
 
   if (!userid) {
     return res.json({ status: false, message: "User ID is required" });

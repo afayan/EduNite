@@ -16,12 +16,12 @@ function Dashboard() {
   const [interestedCourses, setIC] = useState([])
   const [searchResults, setSearchResults] = useState([])
   const navigate = useNavigate()
+  const [isadmin, setisadmin] = useState(false)
 
   if (!checking && !islogged) {
 
     if (admin) {
       alert("admin")
-      navigate('/')
     }
 
     alert("Not logged")
@@ -30,10 +30,28 @@ function Dashboard() {
 
   useEffect(()=>{
 
+    if (!checking) {
+
+      if (userid?.admin) {
+        // alert("admin")
+        setisadmin(true)
+
+        console.log("its an admin");
+        
+      }
+  
+      // alert("Not logged")
+    }
+  
+
+
     if (sessionStorage.getItem('auth')){
       
       getcourses()
       getDashboardInfo(userid)
+
+      console.log("user",userid, checking);
+      
     }
 
     async function getcourses(){
@@ -44,8 +62,8 @@ function Dashboard() {
         },
 
         body: JSON.stringify({
-          userid : JSON.parse(sessionStorage.getItem('auth'))._id
-
+          userid : JSON.parse(sessionStorage.getItem('auth'))._id,
+          admin : isadmin
         })
       })
 
@@ -117,13 +135,13 @@ function Dashboard() {
 
     const q = e.target.value
 
-    console.log(q);
+    // console.log(q);
 
     if (q.trim() == '' ) {
       setSearchResults([])
     }
 
-    console.log(!q);
+    // console.log(!q);
     
 
     
@@ -131,7 +149,7 @@ function Dashboard() {
 
     const d1 = await r1.json()
 
-    console.log(d1);
+    // console.log(d1);
     setSearchResults(d1)
   }
 
@@ -189,6 +207,12 @@ function Dashboard() {
             </div>
           ))}
         </div>
+        </span>
+
+        <span>
+         {isadmin && <button onClick={()=>navigate('/addcourse')}>Add course</button>}
+         {isadmin && <button onClick={()=>navigate('/upload')}>Upload</button>}
+
         </span>
 
       </section>

@@ -27,6 +27,9 @@ const courseschema = new mongoose.Schema({
     },
     description : {
         type : String
+    },
+    creator : {
+        type : String
     }
 })
 
